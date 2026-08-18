@@ -39,4 +39,24 @@ public class UsuarioService {
         Usuario usuario = buscarPorId(id);
         usuarioRepository.delete(usuario);
     }
+
+    public Usuario buscarPorEmail(String email) {
+    return usuarioRepository.findByEmail(email)
+        .orElseThrow(() -> new RuntimeException("Usuario não encontrado"));
+    }
+
+    public boolean verificarEmailExiste(String email) {
+        return usuarioRepository.existsByEmail(email);
+    }
+
+    public List<Usuario> buscarPorNome(String trecho) {
+        // Se a lista estiver vazia, o Spring apenas devolve uma lista vazia [], sem dar erro.
+        return usuarioRepository.findByNomeContainingIgnoreCase(trecho);
+    }
+
+    public List<Usuario> buscarUsuariosMaisRecentes() {
+        return usuarioRepository.findTop5ByOrderByDataCriacaoDesc();
+    }
+
+    
 }

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -60,5 +61,28 @@ public class UsuarioController {
     public ResponseEntity<Void> remover(@PathVariable Long id) {
         usuarioService.remover(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/buscar")
+    public ResponseEntity<List<Usuario>> buscarPorNome(@RequestParam String trecho) {
+        List<Usuario> usuarios = usuarioService.buscarPorNome(trecho);
+        return ResponseEntity.ok(usuarios);
+    }
+
+    @GetMapping("/email")
+    public ResponseEntity<Usuario> buscarPorEmail(@RequestParam("endereco") String email) {
+        Usuario usuario = usuarioService.buscarPorEmail(email);
+        return ResponseEntity.ok(usuario);
+    }
+
+    @GetMapping("/recentes")
+    public ResponseEntity<List<Usuario>> listarRecentes() {
+        List<Usuario> recentes = usuarioService.buscarUsuariosMaisRecentes();
+        return ResponseEntity.ok(recentes);
+    }
+
+    @GetMapping("/existe")
+    public boolean everificarEmailExiste(@RequestParam String email) {
+        return usuarioService.verificarEmailExiste(email);
     }
 }
