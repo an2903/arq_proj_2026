@@ -19,6 +19,14 @@ spring:
       hibernate:
         format_sql: true
 
+  mongodb:
+    host: ${MONGO_HOST:mongo}
+    port: ${MONGO_PORT:27017}
+    database: trokr
+    username: trokr
+    password: 123
+    authenticantion_database: admin
+
 management:
   endpoints:
     web:
