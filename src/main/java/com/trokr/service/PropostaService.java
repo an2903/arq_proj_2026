@@ -5,70 +5,43 @@ import com.trokr.model.Item;
 import com.trokr.model.Proposta;
 import com.trokr.model.Usuario;
 import com.trokr.repository.PropostaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import com.trokr.event.TrocaConcluidaEvent;
 import org.springframework.context.ApplicationEventPublisher;
-
-
+import lombok.RequiredArgsConstructor;
 import java.util.List;
 
+/**
+ * <<Facade>>
+ * Este serviço atua como uma Facade no sistema Trokr.
+ * Ele coordena o fluxo de finalizar a negociação conectando 3 peças principais:
+ * 1. O Repositório (JPA)
+ * 2. As Entidades e o State Pattern (para validar regras e mudar estados)
+ * 3. O Event Publisher (Observer Pattern) para disparar notificações pós-troca.
+ * 
+ * Deliberadamente, nenhuma regra de transição de estado ou cálculo de créditos
+ * foi escrita dentro deste serviço, mantendo-o apenas como um orquestrador.
+ */
 @Service
+@RequiredArgsConstructor
 public class PropostaService {
 
-
+    private final PropostaRepository propostaRepository;
+    private final UsuarioService usuarioService;
+    private final ItemService itemService;
     private final ApplicationEventPublisher eventPublisher;
-    public PropostaService(PropostaRepository propostaRepository, ApplicationEventPublisher eventPublisher) {
-        this.propostaRepository = propostaRepository;
-        this.eventPublisher = eventPublisher;
+
+    public Proposta buscarPorId(Long id) {
+        return propostaRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Proposta não encontrada com o ID: " + id));
     }
 
- 
-    public void finalizarNegociacao(Long propostaId) {
-        Proposta proposta = buscarPorId(propostaId);
-        proposta.finalizarAcordo(); 
-        Proposta salva = propostaRepository.save(proposta);
-
-        
-        TrocaConcluidaEvent evento = construirEventoDeTrocaConcluida(salva);
-        eventPublisher.publishEvent(evento);
-        
+    public List<Proposta> listarTodas() {
+        return propostaRepository.findAll();
     }
 
-    private TrocaConcluidaEvent construirEventoDeTrocaConcluida(Proposta proposta) {
-        if (proposta.getPropostaAnterior() != null) {
-            
-            Proposta raiz = proposta.getPropostaAnterior();
-            return new TrocaConcluidaEvent(
-                raiz.getId(), 
-                raiz.getUsuario(), proposta.getUsuario(), 
-                raiz.getItem(), proposta.getItem(), 
-                LocalDateTime.now()
-            );
-        } else {
-            
-            
-            Proposta contra = proposta.getContrapropostas().stream().findFirst().orElseThrow(() -> new IllegalStateException("Nenhuma contraproposta associada."));
-            return new TrocaConcluidaEvent(
-                proposta.getId(), 
-                proposta.getUsuario(), contra.getUsuario(), 
-                proposta.getItem(), contra.getItem(), 
-                LocalDateTime.now()
-            );
-        }
-    }
-    
-    @Autowired
-    private PropostaRepository propostaRepository;
-
-    @Autowired
-    private UsuarioService usuarioService;
-
-    @Autowired
-    private ItemService itemService; 
-    
     @Transactional
     public Proposta criar(PropostaRequestDTO dto) {
         Usuario usuario = usuarioService.buscarPorId(dto.usuarioId());
@@ -93,15 +66,6 @@ public class PropostaService {
         contraproposta.setItem(item);
 
         return propostaRepository.save(contraproposta);
-    }
-
-    public Proposta buscarPorId(Long id) {
-        return propostaRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Proposta não encontrada com o ID: " + id));
-    }
-
-    public List<Proposta> listarTodas() {
-        return propostaRepository.findAll();
     }
 
     @Transactional
@@ -165,6 +129,25 @@ public class PropostaService {
         return salva;
     }
 
-
-    
+    private TrocaConcluidaEvent construirEventoDeTrocaConcluida(Proposta proposta) {
+        if (proposta.getPropostaAnterior() != null) {
+            Proposta raiz = proposta.getPropostaAnterior();
+            return new TrocaConcluidaEvent(
+                raiz.getId(), 
+                raiz.getUsuario(), proposta.getUsuario(), 
+                raiz.getItem(), proposta.getItem(), 
+                LocalDateTime.now()
+            );
+        } else {
+            Proposta contra = proposta.getContrapropostas().stream().findFirst()
+                .orElseThrow(() -> new IllegalStateException("Nenhuma contraproposta associada."));
+            
+            return new TrocaConcluidaEvent(
+                proposta.getId(), 
+                proposta.getUsuario(), contra.getUsuario(), 
+                proposta.getItem(), contra.getItem(), 
+                LocalDateTime.now()
+            );
+        }
+    }
 }

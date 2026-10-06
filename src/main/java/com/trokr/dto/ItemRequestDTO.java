@@ -2,6 +2,7 @@ package com.trokr.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import com.trokr.model.CategoriaItem;
 
 /**
  * Dados de entrada para criar/atualizar um Item.
@@ -18,6 +19,10 @@ public record ItemRequestDTO(
         String descricao,
 
         @NotNull(message = "usuarioId é obrigatório")
-        Long usuarioId
+        Long usuarioId,
+
+         @NotNull(message = "categoria é obrigatória")
+        CategoriaItem categoria
+        
 ) {
 }

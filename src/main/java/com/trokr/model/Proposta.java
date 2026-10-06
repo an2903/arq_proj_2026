@@ -12,7 +12,7 @@ import com.trokr.model.state.proposta.EstadoProposta;
 import com.trokr.model.state.proposta.EstadoRascunho;
 
 import com.trokr.model.state.contraproposta.EstadoRascunhoContra;
-import com.trokr.model.state.contraproposta.EstadoEm_Analise;
+import com.trokr.model.state.contraproposta.EstadoEmAnalise;
 import com.trokr.model.state.contraproposta.EstadoRecusado;
 import com.trokr.model.state.contraproposta.EstadoCanceladoContra;
 
@@ -98,7 +98,7 @@ public void setItem(Item item) {
                 case CANCELADO -> this.estado = new EstadoCancelado();
 
             
-                case EM_ANALISE -> this.estado = new EstadoEm_Analise();
+                case EM_ANALISE -> this.estado = new EstadoEmAnalise();
                 case NEGOCIADO_CONTRA -> this.estado = new EstadoNegociado();
                 case FINALIZADO_CONTRA -> this.estado = new EstadoFinalizado();
                 case RECUSADO -> this.estado = new EstadoRecusado();

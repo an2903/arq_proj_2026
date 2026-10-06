@@ -5,7 +5,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @Component
-public class NotificarUsuarios {
+public class NotificarUsuariosListener {
 
     @EventListener
     public void aoConcluirTroca(TrocaConcluidaEvent evento) {

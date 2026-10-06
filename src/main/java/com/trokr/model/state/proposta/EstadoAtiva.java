@@ -6,7 +6,7 @@ import com.trokr.model.state.Status;
 public class EstadoAtiva implements EstadoProposta {
 
     @Override
-    public void solicitarHomologacao(Proposta proposta) {
+    public void aceitarContraproposta(Proposta proposta) {
         proposta.mudarEstadoPara(new EstadoNegociado(), Status.NEGOCIADO);
     }
 

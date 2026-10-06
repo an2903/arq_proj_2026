@@ -5,7 +5,7 @@ import com.trokr.model.state.proposta.EstadoNegociado;
 import com.trokr.model.state.proposta.EstadoProposta;
 import com.trokr.model.state.Status;
 
-public class EstadoEm_Analise implements EstadoProposta {
+public class EstadoEmAnalise implements EstadoProposta {
 
     @Override
     public void aceitar (Proposta proposta) {

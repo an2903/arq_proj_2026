@@ -16,5 +16,6 @@ public record UsuarioRequestDTO(
         @NotBlank(message = "email é obrigatório")
         @Email(message = "email deve ter um formato válido")
         String email
+
 ) {
 }

@@ -8,7 +8,7 @@ public class EstadoRascunhoContra implements EstadoProposta {
     
 @Override 
     public void enviar(Proposta proposta) {
-        proposta.mudarEstadoPara(new EstadoEm_Analise(), Status.EM_ANALISE);
+        proposta.mudarEstadoPara(new EstadoEmAnalise(), Status.EM_ANALISE);
         
     }
 

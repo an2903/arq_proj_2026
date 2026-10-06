@@ -1,20 +1,17 @@
 package com.trokr.controller;
+
 import com.trokr.dto.PropostaRequestDTO;
 import com.trokr.dto.PropostaResponseDTO;
-
 import com.trokr.model.Proposta;
 import com.trokr.service.PropostaService;
 
-
 import jakarta.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
 
 @RestController
 @RequestMapping("/api/propostas")
@@ -29,7 +26,7 @@ public class PropostaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(PropostaResponseDTO.fromEntity(salva));
     }
 
-@PostMapping("/{id}/contraproposta")
+    @PostMapping("/{id}/contraproposta")
     public ResponseEntity<PropostaResponseDTO> criarContraproposta(
             @PathVariable Long id, 
             @Valid @RequestBody PropostaRequestDTO dto) {
@@ -52,52 +49,51 @@ public class PropostaController {
         return ResponseEntity.ok(propostas);
     }
 
-@PutMapping("/{id}/solicitar-homologacao")
+    @PatchMapping("/{id}/solicitar-homologacao")
     public ResponseEntity<Void> solicitarHomologacao(@PathVariable Long id) {
         propostaService.solicitarHomologacao(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{id}/enviar-homologacao")
+    @PatchMapping("/{id}/enviar-homologacao")
     public ResponseEntity<Void> enviarParaHomologacao(@PathVariable Long id) {
         propostaService.enviarParaHomologacao(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{id}/enviar")
+    @PatchMapping("/{id}/enviar")
     public ResponseEntity<Void> enviar(@PathVariable Long id) {
         propostaService.enviar(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{id}/aceitar")
+    @PatchMapping("/{id}/aceitar")
     public ResponseEntity<Void> aceitar(@PathVariable Long id) {
         propostaService.aceitar(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{id}/aceitar-contraproposta")
+    @PatchMapping("/{id}/aceitar-contraproposta")
     public ResponseEntity<Void> aceitarContraproposta(@PathVariable Long id) {
         propostaService.aceitarContraproposta(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{id}/recusar")
+    @PatchMapping("/{id}/recusar")
     public ResponseEntity<Void> recusar(@PathVariable Long id) {
         propostaService.recusarParaHomologacao(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{id}/cancelar")
+    @PatchMapping("/{id}/cancelar")
     public ResponseEntity<Void> cancelar(@PathVariable Long id) {
         propostaService.cancelar(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{id}/finalizar-acordo")
+    @PatchMapping("/{id}/finalizar-acordo")
     public ResponseEntity<Void> finalizarAcordo(@PathVariable Long id) {
         propostaService.finalizarAcordo(id);
         return ResponseEntity.noContent().build();
     }
-    
 }

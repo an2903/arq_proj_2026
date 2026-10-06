@@ -7,11 +7,11 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @Component
-public class RegistrarHistorico {
+public class RegistrarHistoricoListener {
 
     private final HistoricoRepository historicoRepository;
 
-    public RegistrarHistorico(HistoricoRepository historicoRepository) {
+    public RegistrarHistoricoListener(HistoricoRepository historicoRepository) {
         this.historicoRepository = historicoRepository;
     }
 

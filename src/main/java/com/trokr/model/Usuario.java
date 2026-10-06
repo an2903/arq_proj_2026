@@ -37,9 +37,10 @@ public class Usuario {
     @Column(nullable = false, unique = true)
     private String email;
 
-    
-
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime dataCriacao;
+
+    @Column(nullable = false)
+    private Integer saldoCreditos = 0;
 }

@@ -47,6 +47,7 @@ public class ItemController {
         Item item = new Item();
         item.setTitulo(dto.titulo());
         item.setDescricao(dto.descricao());
+        item.setCategoria(dto.categoria());
 
         Item salvo = itemService.criar(item, dto.usuarioId());
         return ResponseEntity.status(HttpStatus.CREATED).body(ItemResponseDTO.fromEntity(salvo));

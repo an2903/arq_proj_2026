@@ -20,7 +20,7 @@ public class AtualizarAvaliacaoListener {
         this.avaliacaoRepository = avaliacaoRepository;
         this.propostaRepository = propostaRepository;
     }
-
+    
     @EventListener
     @Transactional
     public void onTrocaConcluida(TrocaConcluidaEvent event) {
