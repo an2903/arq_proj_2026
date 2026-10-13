@@ -1,20 +1,23 @@
 package com.trokr.service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.trokr.dto.PropostaRequestDTO;
+import com.trokr.event.TrocaConcluidaEvent;
 import com.trokr.model.Item;
 import com.trokr.model.Proposta;
 import com.trokr.model.Usuario;
 import com.trokr.repository.PropostaRepository;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import java.time.LocalDateTime;
-import com.trokr.event.TrocaConcluidaEvent;
-import org.springframework.context.ApplicationEventPublisher;
+
 import lombok.RequiredArgsConstructor;
-import java.util.List;
 
 /**
- * <<Facade>>
+ * <<Facade>>`
  * Este serviço atua como uma Facade no sistema Trokr.
  * Ele coordena o fluxo de finalizar a negociação conectando 3 peças principais:
  * 1. O Repositório (JPA)
@@ -76,13 +79,6 @@ public class PropostaService {
     }
 
     @Transactional
-    public Proposta enviarParaHomologacao(Long id) {
-        Proposta proposta = buscarPorId(id);
-        proposta.enviarParaHomologacao();
-        return propostaRepository.save(proposta);
-    }
-
-    @Transactional
     public Proposta enviar(Long id) {
         Proposta proposta = buscarPorId(id);
         proposta.enviar();
@@ -97,9 +93,18 @@ public class PropostaService {
     }
 
     @Transactional
-    public Proposta aceitarContraproposta(Long id) {
+    public Proposta aceitarContraproposta(Long id, String mensagem) { 
         Proposta proposta = buscarPorId(id);
-        proposta.aceitarContraproposta();
+        proposta.setMensagem(mensagem); 
+        proposta.aceitarContraproposta(); 
+        return propostaRepository.save(proposta);
+    }
+
+    @Transactional
+    public Proposta recusar(Long id, String mensagem) {
+        Proposta proposta = buscarPorId(id);
+        proposta.setMensagem(mensagem); 
+        proposta.recusar(); 
         return propostaRepository.save(proposta);
     }
 
@@ -120,7 +125,7 @@ public class PropostaService {
     @Transactional
     public Proposta finalizarAcordo(Long id) {
         Proposta proposta = buscarPorId(id);
-        proposta.finalizarAcordo();
+        proposta.finalizarAcordo(); // A entidade propaga o encerramento para os vínculos
         Proposta salva = propostaRepository.save(proposta);
         
         TrocaConcluidaEvent evento = construirEventoDeTrocaConcluida(salva);

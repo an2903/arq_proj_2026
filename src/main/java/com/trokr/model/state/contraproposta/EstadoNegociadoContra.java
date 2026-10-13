@@ -15,4 +15,11 @@ public class EstadoNegociadoContra implements EstadoProposta {
     public void negociacaoFalhou(Proposta proposta) {
         proposta.mudarEstadoPara(new EstadoRecusado(), Status.RECUSADO);
     }
+
+    @Override 
+    public void recusar(Proposta proposta) {
+        proposta.mudarEstadoPara(new EstadoRecusado(), Status.RECUSADO);
+    }
+
+   
 }

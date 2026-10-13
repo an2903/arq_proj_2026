@@ -1,9 +1,11 @@
 package com.trokr.service.strategy;
 
-import com.trokr.model.CategoriaItem;
-import com.trokr.model.Item;
 import org.springframework.stereotype.Component;
 
+import com.trokr.model.CategoriaItem;
+import com.trokr.model.Item;
+
+@Component 
 public class CreditoExperiencia implements EstrategiaCredito{
     @Override 
     public CategoriaItem categoria() {

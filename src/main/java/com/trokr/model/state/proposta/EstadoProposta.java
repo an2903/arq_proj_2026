@@ -15,7 +15,8 @@ public interface EstadoProposta {
     default void aceitarContraproposta(Proposta proposta) { throw new IllegalStateException("Ação inválida neste estado."); }
     default void negociacaoFalhou(Proposta proposta) { throw new IllegalStateException("Ação inválida neste estado."); }
     default void finalizarAcordo(Proposta proposta) { throw new IllegalStateException("Ação inválida neste estado."); }
-
+    default void recusar(Proposta proposta) {
+    }
 
 }
 

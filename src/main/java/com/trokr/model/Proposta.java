@@ -1,8 +1,15 @@
 package com.trokr.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
-import com.trokr.model.state.*;
+import com.trokr.model.state.Status;
+import com.trokr.model.state.contraproposta.EstadoCanceladoContra;
+import com.trokr.model.state.contraproposta.EstadoEmAnalise;
+import com.trokr.model.state.contraproposta.EstadoFinalizadoContra;
+import com.trokr.model.state.contraproposta.EstadoNegociadoContra;
+import com.trokr.model.state.contraproposta.EstadoRascunhoContra;
+import com.trokr.model.state.contraproposta.EstadoRecusado;
 import com.trokr.model.state.proposta.EstadoAtiva;
 import com.trokr.model.state.proposta.EstadoCancelado;
 import com.trokr.model.state.proposta.EstadoFinalizado;
@@ -11,15 +18,20 @@ import com.trokr.model.state.proposta.EstadoNegociado;
 import com.trokr.model.state.proposta.EstadoProposta;
 import com.trokr.model.state.proposta.EstadoRascunho;
 
-import com.trokr.model.state.contraproposta.EstadoRascunhoContra;
-import com.trokr.model.state.contraproposta.EstadoEmAnalise;
-import com.trokr.model.state.contraproposta.EstadoRecusado;
-import com.trokr.model.state.contraproposta.EstadoCanceladoContra;
-
-
-
-import jakarta.persistence.*;
-import java.util.List;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.PostLoad;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 
 @Entity
@@ -51,8 +63,11 @@ public class Proposta {
 
     @Transient
     private EstadoProposta estado;
-   
 
+    @Column(length=  500)
+    private String mensagem;
+
+   
     public Proposta() {
         this.status = Status.RASCUNHO;
         this.estado = new EstadoRascunho();
@@ -72,6 +87,14 @@ public void setUsuario(Usuario usuario) {
 
 public Item getItem() {
     return item;
+}
+
+public String getMensagem() {
+        return mensagem;
+    }
+
+public void setMensagem(String mensagem) {
+    this.mensagem =mensagem;
 }
 
 public void setItem(Item item) {
@@ -99,8 +122,8 @@ public void setItem(Item item) {
 
             
                 case EM_ANALISE -> this.estado = new EstadoEmAnalise();
-                case NEGOCIADO_CONTRA -> this.estado = new EstadoNegociado();
-                case FINALIZADO_CONTRA -> this.estado = new EstadoFinalizado();
+                case NEGOCIADO_CONTRA -> this.estado = new EstadoNegociadoContra();
+                case FINALIZADO_CONTRA -> this.estado = new EstadoFinalizadoContra();
                 case RECUSADO -> this.estado = new EstadoRecusado();
                 case CANCELADO_CONTRA -> this.estado = new EstadoCanceladoContra();
             }
@@ -112,7 +135,6 @@ public void setItem(Item item) {
     }
 
 
-
     public void enviar(){
         this.estado.enviar(this);
     }
@@ -121,9 +143,24 @@ public void setItem(Item item) {
         this.estado.solicitarHomologacao(this);
     }
 
-    public void enviarParaHomologacao() {
-        this.estado.enviarParaHomologacao(this);
+    public void recusar() {
+        this.estado.recusar(this);
+
+        if(this.contrapropostas != null) {
+            for (Proposta contra : this.contrapropostas) {
+                contra.recusar(); 
+                if (contra.getStatus() != Status.RECUSADO) {
+                    contra.recusar();
+                }
+            }
+        }
+         if (this.propostaAnterior != null) {
+            if (this.propostaAnterior.getStatus() != Status.ATIVA) {
+                this.propostaAnterior.recusar();
+            }
+         }
     }
+
 
     public void recusarParaHomologacao() {
         this.estado.recusarParaHomologacao(this);
@@ -141,8 +178,18 @@ public void setItem(Item item) {
         this.estado.voltar(this);
     }
 
-    public void aceitarContraproposta() {
+   public void aceitarContraproposta() {
         this.estado.aceitarContraproposta(this);
+
+        if (this.contrapropostas != null) {
+            for (Proposta contra : this.contrapropostas) {
+                contra.aceitar(); 
+            }
+        }
+        
+        if (this.propostaAnterior != null) {
+            this.propostaAnterior.aceitarContraproposta();
+        }
     }
 
     public void negociacaoFalhou() {
@@ -151,6 +198,16 @@ public void setItem(Item item) {
 
     public void finalizarAcordo() {
         this.estado.finalizarAcordo(this);
+
+        if (this.contrapropostas != null) {
+            for (Proposta contra : this.contrapropostas) {
+                contra.finalizarAcordo();
+            }
+        }
+        
+        if (this.propostaAnterior != null) {
+            this.propostaAnterior.finalizarAcordo();
+        }
     }
 
     public Long getId() {
@@ -164,6 +221,7 @@ public void setItem(Item item) {
     public void setPropostaAnterior(Proposta propostaAnterior) {
         this.propostaAnterior = propostaAnterior;
     }
+
 
     public List<Proposta> getContrapropostas() {
         return contrapropostas;

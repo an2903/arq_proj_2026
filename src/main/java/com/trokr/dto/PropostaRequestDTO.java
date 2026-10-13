@@ -10,6 +10,8 @@ public record PropostaRequestDTO(
     @NotNull(message = "O ID do item principal é obrigatório")
     Long itemId,
 
+    String mensagem,
+
 
     Long propostaAnteriorId ) {
         

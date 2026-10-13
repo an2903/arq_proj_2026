@@ -1,14 +1,15 @@
 package com.trokr.listener;
 
+import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.trokr.event.TrocaConcluidaEvent;
 import com.trokr.model.Avaliacao;
 import com.trokr.model.Proposta;
 import com.trokr.model.StatusAvaliacao;
 import com.trokr.repository.AvaliacaoRepository;
 import com.trokr.repository.PropostaRepository;
-import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class AtualizarAvaliacaoListener {
@@ -35,7 +36,6 @@ public class AtualizarAvaliacaoListener {
         avaliacao1.setStatus(StatusAvaliacao.PENDENTE);
         avaliacaoRepository.save(avaliacao1);
 
-        
         Avaliacao avaliacao2 = new Avaliacao();
         avaliacao2.setAvaliador(event.getUsuarioB());
         avaliacao2.setAvaliado(event.getUsuarioA());

@@ -17,7 +17,7 @@ public class EstadoAtiva implements EstadoProposta {
 
     @Override
     public void cancelar(Proposta proposta) {
-        proposta.mudarEstadoPara(new EstadoRascunho(), Status.CANCELADO);
+        proposta.mudarEstadoPara(new EstadoCancelado(), Status.CANCELADO);
     }
     
 }

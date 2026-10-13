@@ -1,9 +1,9 @@
 package com.trokr.model.state.contraproposta;
 
 import com.trokr.model.Proposta;
+import com.trokr.model.state.Status;
 import com.trokr.model.state.proposta.EstadoNegociado;
 import com.trokr.model.state.proposta.EstadoProposta;
-import com.trokr.model.state.Status;
 
 public class EstadoEmAnalise implements EstadoProposta {
 
@@ -13,12 +13,9 @@ public class EstadoEmAnalise implements EstadoProposta {
     }
 
     @Override
-    public void recusarParaHomologacao(Proposta proposta) {
-        proposta.mudarEstadoPara(new EstadoRecusado(), Status.RECUSADO);
-    }
-
-    @Override
     public void cancelar(Proposta proposta) {
         proposta.mudarEstadoPara(new EstadoCanceladoContra(), Status.CANCELADO_CONTRA);
     }
+
+
 }

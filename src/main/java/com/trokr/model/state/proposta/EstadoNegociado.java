@@ -11,7 +11,7 @@ public class EstadoNegociado implements EstadoProposta {
     }
 
     @Override
-    public void recusarParaHomologacao(Proposta proposta) {
+    public void recusar(Proposta proposta) {
         proposta.mudarEstadoPara(new EstadoAtiva(), Status.ATIVA);
     }
 
